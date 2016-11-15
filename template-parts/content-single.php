@@ -10,17 +10,21 @@
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<header class="entry-header">
-		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+		<?php the_title( '<h1 class="entry-title single-title">', '</h1>' ); ?>
 	</header><!-- .entry-header -->
 
-	<?php twentysixteen_post_thumbnail(); ?>
-
- 	<footer class="entry-footer">
-		<?php twentysixteen_entry_meta(); ?>
+ 	<footer class="entry-footer footer-single">
+		<?php downthefield_entry_meta(); ?>
 		
 	</footer><!-- .entry-footer -->
 
-	<div class="entry-content">
+	<?php twentysixteen_post_thumbnail(); ?>
+
+	<?php if(!has_post_thumbnail()): ?>
+		<div class="one-em-space"></div>
+	<?php endif; ?>
+
+	<div class="entry-content content-single">
 		<?php
 			the_content();
 

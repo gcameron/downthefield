@@ -55,16 +55,36 @@
 					<?php endif; ?>
 				</div><!-- .site-branding -->
 			</div>
-    		<nav id="site-navigation"><?php
-    			echo '<a id="tag" href="'.home_url('/').'">Home</a>';
-    			echo '<a id="tag" href="http://yaledailynews.com">Yale Daily News</a>';
-    			echo '<a id="tag" href="'.home_url('/').'category/recaps">Recaps</a>';
-				echo '<a id="tag" href="'.home_url('/').'category/awards">Awards</a>';
-				echo '<a id="tag" href="'.home_url('/').'category/ivies">Around the Ivies</a>';
-				echo '<a id="tag" href="http://yaledailynews.com/blog/category/sports">Sports Home</a>';
-    		//	echo '<a id="tag" href="https://twitter.com/YDNsports">@YDNSports</a>'; 
-    			echo '<a id="tag" href="'.home_url('/').'about/">About</a>';
-    			/*<div id="nav-search">
+			<nav id="site-navigation"><?php
+				if (is_home()) {
+					echo '<a id="selected-tag" href="'.home_url('/').'">Home</a>';
+				} else {
+					echo '<a id="tag" href="'.home_url('/').'">Home</a>';
+				}
+				if (is_category('recaps')) {
+					echo '<a id="selected-tag" href="'.home_url('/').'category/recaps">Recaps</a>';
+				} else {
+					echo '<a id="tag" href="'.home_url('/').'category/recaps">Recaps</a>';
+				}
+				if (is_category('awards')) {
+					echo '<a id="selected-tag" href="'.home_url('/').'category/awards">Awards</a>';
+				} else {
+					echo '<a id="tag" href="'.home_url('/').'category/awards">Awards</a>';
+				}
+				if (is_category('ivies')) {
+					echo '<a id="selected-tag" href="'.home_url('/').'category/ivies">Around the Ivies</a>';
+				} else {
+					echo '<a id="tag" href="'.home_url('/').'category/ivies">Around the Ivies</a>';
+				}
+				echo '<a id="tag" href="http://yaledailynews.com/blog/category/sports">YDN Sports Home</a>';
+				echo '<a id="tag" href="http://yaledailynews.com">Yale Daily News</a>';
+			//	echo '<a id="tag" href="https://twitter.com/YDNsports">@YDNSports</a>';
+				if (is_page('about')) {
+	    			echo '<a id="selected-tag" href="'.home_url('/').'about/">About</a>';					
+				} else {
+					echo '<a id="tag" href="'.home_url('/').'about/">About</a>';
+				}
+				/*<div id="nav-search">
     				<i class="fa fa-search"></i>
     				<form class="search-box" action="http://yaledailynews.com/">
     					<input type="text" placeholder="Search articles and authors" value="" name="s" id="s" />

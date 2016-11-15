@@ -14,6 +14,8 @@
  * @since Twenty Sixteen 1.0
  */
 
+global $counter;
+
 get_header(); ?>
 
 	<div id="primary" class="content-area">
@@ -28,6 +30,8 @@ get_header(); ?>
 			<?php endif; ?>
 
 			<?php
+
+			$counter = 0;
 			// Start the loop.
 			while ( have_posts() ) : the_post();
 
@@ -37,9 +41,7 @@ get_header(); ?>
 				 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
 				 */
 				get_template_part( 'template-parts/content', get_post_format() );
-				?>
-				<hr>
-				<?php
+				$counter++;
 
 			// End the loop.
 			endwhile;
@@ -54,7 +56,6 @@ get_header(); ?>
 		// If no content, include the "No posts found" template.
 		else :
 			get_template_part( 'template-parts/content', 'none' );
-
 		endif;
 		?>
 
