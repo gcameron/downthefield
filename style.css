@@ -4,8 +4,8 @@ Theme URI: https://wordpress.org/themes/twentysixteen/
 Author: Greg Cameron
 Author URI: https://wordpress.org/
 Description: Child theme of twentysixteendtf
-Template: twentysixteendtf
-Version: 1.0.6
+Template: twentysixteen
+Version: 1.0.7
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: black, blue, gray, pink, purple, white, yellow, dark, light, two-columns, left-sidebar, fixed-layout, responsive-layout, accessibility-ready, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-images, microformats, post-formats, rtl-language-support, sticky-post, threaded-comments, translation-ready
@@ -322,14 +322,14 @@ div.top-article-container {
 	height: 360px;
 }
 
-div.top-article-color-overlay::after {
+div.top-article-container::after {
 	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	background: -ms-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	background: linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	content: "";
-	z-index: 2;
+	z-index: 1;
 	top: 0;
 	left: 0;
 	bottom: 0;
@@ -337,7 +337,7 @@ div.top-article-color-overlay::after {
 	position: absolute;
 }
 
-div.top-article-container:hover > div.top-article-color-overlay::after {
+div.top-article-container:hover:after {
 	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
 	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
 	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;

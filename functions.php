@@ -454,7 +454,7 @@ function allow_contributor_uploads() {
 if (class_exists('MultiPostThumbnails')) {
 
 	new MultiPostThumbnails(array(
-		'label' => 'Home Page Image (1:2 height/width ratio or shorter)',
+		'label' => 'Home Page Image (will be cropped as roughly 2:1 horizontal)',
 		'id' => 'homepage-image',
 		'post_type' => 'post'
 		) );
@@ -479,11 +479,68 @@ function downthefield_entry_meta() {
 	}
 
 	if ( in_array( get_post_type(), array( 'post', 'attachment' ) ) ) {
-		twentysixteen_entry_date();
-		printf(', '.get_post_time('g:i A'));
+		downthefield_entry_date();
+		printf(', '.str_replace(array('am','pm'),array('a.m.','p.m.'),get_post_time('g:i a')));
 	}
 
 }
+
+function downthefield_entry_date() {
+	$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
+	if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+		$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
+	}
+
+	$time_string = sprintf( $time_string,
+		esc_attr( get_the_date( 'c' ) ),
+		get_the_date(),
+		esc_attr( get_the_modified_date( 'c' ) ),
+		get_the_modified_date()
+	);
+
+	printf( '<span class="posted-on"><span class="screen-reader-text">%1$s</span>%2$s</span>',
+		_x( 'Posted on', 'Used before publish date.', 'twentysixteen' ),
+		$time_string
+	);
+}
+
+function downthefield_post_thumbnail($class = 'attachment-post-thumbnail size-post-thumbnail') {
+	if ( post_password_required() || is_attachment() || ! has_post_thumbnail() ) {
+		return;
+	}
+
+	if ( is_singular() ) :
+	?>
+
+	<div class="post-thumbnail">
+		<?php the_post_thumbnail(); ?>
+	</div><!-- .post-thumbnail -->
+
+	<?php else : ?>
+
+	<a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true">
+		<?php the_post_thumbnail( 'post-thumbnail', array( 'alt' => the_title_attribute( 'echo=0' ), 'class' => $class) ); ?>
+	</a>
+
+	<?php endif; // End is_singular()
+}
+
+//Remove a function from the parent theme
+function remove_parent_filters(){ //Have to do it after theme setup, because child theme functions are loaded first
+	if (has_filter( 'excerpt_more', 'twentysixteen_excerpt_more' )) {
+		remove_filter('excerpt_more', 'twentysixteen_excerpt_more');
+	}
+}
+
+add_action( 'after_setup_theme', 'remove_parent_filters' );
+
+// this ellipsis looks better than the one the parent theme has
+function space() {
+	return " … ";
+}
+
+add_filter( 'excerpt_more', 'space' );
 
 function possibly_update_standings_schedule() {
 	if (!file_exists('yaleschedule/')) {

@@ -33,7 +33,6 @@ if($counter == $top_start && !$paged) {
 if ($type == 'top') : ?>
 	<a class="link-wrap" href="<?php the_permalink(); ?>">
 		<div class="top-article-container">
-			<div class="top-article-color-overlay"></div>
 			<?php if (class_exists('MultiPostThumbnails')) {
 				$imageid = MultiPostThumbnails::get_post_thumbnail_id(get_post_type(), 'homepage-image', $post->ID);
 				$imageurl = wp_get_attachment_image_src($imageid,'large');
@@ -103,7 +102,7 @@ if ($type == 'top') : ?>
 		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 
 		<footer class="entry-footer">
-			<?php twentysixteen_entry_meta(); ?>
+			<?php downthefield_entry_meta(); ?>
 		</footer>
 
 		<div class="entry-content">
@@ -200,12 +199,12 @@ if ($type == 'top') : ?>
 
 		<?php else : ?>
 			<a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true">
-				<?php twentysixteen_post_thumbnail(); ?>
+				<?php downthefield_post_thumbnail(); ?>
 			</a>
 		<?php endif; ?>
 
 		<footer class="entry-footer">
-			<?php twentysixteen_entry_meta(); ?>
+			<?php downthefield_entry_meta(); ?>
 		</footer><!-- .entry-footer -->
 
 		<div class="entry-content">
