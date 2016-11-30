@@ -8,6 +8,7 @@
  * @subpackage Twenty_Sixteen
  * @since Twenty Sixteen 1.0
  */
+
 ?>
 
 		</div><!-- .site-content -->
@@ -51,8 +52,8 @@
 				<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'twentysixteen' ) ); ?>"><?php printf( __( 'Proudly powered by %s', 'twentysixteen' ), 'WordPress' ); ?></a>
 			</div>
 		</footer>
-	</div><!-- .site-inner -->
-</div><!-- .site -->
+	</div>
+</div>-->
 
 <?php wp_footer(); ?>
 </body>

@@ -5,7 +5,7 @@ Author: Greg Cameron
 Author URI: https://wordpress.org/
 Description: Child theme of twentysixteendtf
 Template: twentysixteendtf
-Version: 1.5
+Version: 1.0.4
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: black, blue, gray, pink, purple, white, yellow, dark, light, two-columns, left-sidebar, fixed-layout, responsive-layout, accessibility-ready, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-images, microformats, post-formats, rtl-language-support, sticky-post, threaded-comments, translation-ready
@@ -25,7 +25,8 @@ Use it to make something cool, have fun, and share what you've learned with othe
 }
 
 /* for twitter link at top of sidebar */
-a.twitter {
+a.twitter,
+div.timeline-Widget div.timeline-Header h1.timeline-Header-title {
 	color: #686868;
 	text-decoration: none;
 }
@@ -42,7 +43,6 @@ a.twitter:active {
 }
 
 /* sidebar titles other than the twitter one */
-
 .sidebar.sidebar-title {
 	margin-bottom: 0;
 	font-family: "Avenir", Montserrat, "Helvetica Neue", sans-serif;
@@ -78,14 +78,16 @@ table.sidebar.sidebar-table tr.yale {
 
 table {
     width:100%;
+    border-collapse: collapse;
 }
 
 table, tr, td, th {
 	border: 0px;
 }
 
-table { border-collapse:collapse; }
-table thead th { border-bottom: 1px solid #717171; }
+table thead th {
+	border-bottom: 1px solid #717171;
+}
 
 th {
 	border-width: 0 1px 1px 0;
@@ -93,6 +95,7 @@ th {
 	border-bottom: 1px black;
 }
 
+/* for sidebar schedule */
 table td.date {
 	width:100%;
 	font-size:12px;
@@ -130,9 +133,9 @@ table td.super-small, th.super-small {
 	font-size:10px;
 }
 
-table.row {
-	display: none;
-}
+/* end sidebar */
+
+/* header */
 
 .page-header {
 	border-top: none;
@@ -176,7 +179,6 @@ header#site-header nav#site-navigation a:hover#tag,
 header#site-header nav#site-navigation a#selected-tag {
 	color: #2882C8;
 }
-
 
 .site-branding,
 .site-header-menu {
@@ -232,6 +234,11 @@ header#site-header nav#site-navigation a#selected-tag {
 	font-weight: 400;
 }
 
+/* don't show row of stories on mobile */
+div.index-post-row {
+	display: none;
+}
+
 .widget {
 	border-top: none !important;
 	margin-bottom: 0em;
@@ -259,17 +266,11 @@ header#site-header nav#site-navigation a#selected-tag {
 	margin-bottom: 3.5em;
 }
 
-h3.row-title {
-	font-family: Georgia, serif;
-	line-height: 1.3;
-	vertical-align: top;
-	margin-right: 0.3%;
-}
-
 div.top-title {
 	position:absolute;
 	width: 100%;
-	top: 25%;
+	top: 50%;
+	transform: translateY(-50%);;
 	z-index:2;
 }
 
@@ -328,11 +329,11 @@ article.top {
 }
 
 article.top::after {
-	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.6) 100%), no-repeat;
-	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.6) 100%), no-repeat;
-	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.6) 100%), no-repeat;
-	background: -ms-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.6) 100%), no-repeat;
-	background: linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.6) 100%), no-repeat;
+	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
+	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
+	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
+	background: -ms-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
+	background: linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -342,11 +343,11 @@ article.top::after {
 }
 
 article.top:hover:after {
-	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0) 100%), no-repeat;
-	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0) 100%), no-repeat;
-	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0) 100%), no-repeat;
-	background: -ms-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0) 100%), no-repeat;
-	background: linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0) 100%), no-repeat;
+	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
+	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
+	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
+	background: -ms-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
+	background: linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
 	top: 0;
 	left: 0;
 	width: 100%;
@@ -361,20 +362,24 @@ article.top:hover:after {
 
 .post-thumbnail-top {
 	z-index:0;
-	min-height: 200px;
+	height: 350px;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
 	background: white;
 	display: block;
 	margin: 0 0 0.5em;
 }
 
-.row-thumbnail-container {
-	margin: 0;
-	z-index: 2;
-	width: 100%; /*or 70%, or what you want*/
-	height: 150px; /*or 70%, or what you want*/
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
+.thumbnail-caption,
+.wp-caption figcaption.wp-caption-text {
+	font-size: 14px;
+	font-style: normal;
+	line-height: 1;
+}
+
+.wp-caption figcaption.wp-caption-text {
+	padding-top: 4px;
 }
 
 article.mobile {
@@ -400,18 +405,6 @@ hr.non-mobile {
 	font-weight: 700;
 	line-height: 1.25;
 	margin-bottom: 1.0em;
-}
-
-div.container-container {
-	margin: 0;
-}
-
-table.row div.container-container {
-	margin: 0 0 0.75em;
-}
-
-div.container-container:hover {
-	opacity: .85;
 }
 
 blockquote {
@@ -529,72 +522,140 @@ p, h1, h2, h3, h4 {
 		margin-bottom: 1.5em;
 	}
 
-	table.row {
-		position: relative;
-		width: 33.333333333%;
-		margin:0;
-		padding: 0 0 2em;
-		display: inline-block;
-		vertical-align:top;
-	}
-
 	table.entry {
 		margin-bottom: 0;
 	}
 
+	article.has-post-thumbnail table.entry {
+		min-height: 200px;
+	}
+
 	table.entry td.content {
-		width:100%;
 		vertical-align: top;
 	}
 
-	table.entry td.thumbnail {
-		width:0%;
-		padding-left: 0%;
+	div.index-post-row {
+		position: relative;
+		width: 33.333333333%;
+		padding-bottom: 10px;
+		display: inline-block;		
+	}
+
+	div.row-thumbnail-container {
+		margin: 0;
+	}
+
+	div.index-post-row div.left,
+	div.index-post-row div.center,
+	div.index-post-row div.right {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		padding-top: 3px;
+		padding-bottom: 3px;
+	}
+
+	div.index-post-row div.container-container {
+		margin: 0;
+		flex: 0;
+	}
+
+	div.index-post-row div.row-title {
+		flex: 0;
+		padding-left: 3px;
+	}
+
+
+	div.index-post-row div.sport {
+		flex: 1;
+		position: relative;
+		font-family: Avenir, sans-serif;
+		text-transform: uppercase;
+		font-size: 12px;
+		font-weight: 800;
+	}
+
+	div.sport-text {
+		position: absolute;
+		bottom: 0;
+	}
+
+	div.index-post-row div.left div.container-container {
+		padding-left: 0px;
+		padding-right: 3px;
+	}
+
+	div.index-post-row div.center div.container-container {
+		padding-left: 6px;
+		padding-right: 6px;
+	}
+
+	div.index-post-row div.right div.container-container {
+		padding-left: 3px;
+		padding-right: 0px;
+	}
+
+	div.container-container:hover {
+		opacity: 0.85;
+	}
+
+	.row-thumbnail-container {
+		margin: 0;
+		z-index: 2;
+		min-width: 100%;   /* or 70%, or what you want*/
+		height: 150px; /* or 70%, or what you want*/
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	h3.row-title {
+		margin-top: 5px;
+		font-family: Georgia, serif;
+		line-height: 1.3;
 		vertical-align: top;
+		margin-right: 0.3%;
+	}
+
+	article.has-post-thumbnail .main-thumbnail-container {
+		position: absolute;
+		left: 10px;
+		right: 0;
+		bottom: 0;
+		top: 0;
 	}
 
 	.main-thumbnail-container {
 		display: none;
 	}
 
+	table.entry td.thumbnail {
+		width: 0%;
+	}
+
 	article.has-post-thumbnail table.entry td.content {
-		width:60%;
+		width: 60%;
 		vertical-align: top;
 	}
 
 	article.has-post-thumbnail table.entry td.thumbnail {
-		width:40%;
+		width: 40%;
 		padding-left: 3%;
+		position: relative;
 		vertical-align: top;
 	}
 
-	article.has-post-thumbnail .container-container {
+	article.has-post-thumbnail .row-thumbnail-container {
 		display: block;
 		z-index: 2;
-		width:  100%; /*or 70%, or what you want*/
-		height: 200px; /*or 70%, or what you want*/
 	}
 
 	article.has-post-thumbnail .main-thumbnail-container {
 		display: block;
 		z-index: 2;
-		width:  100%; /*or 70%, or what you want*/
-		height: 200px; /*or 70%, or what you want*/
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
-	}
-
-	table.row td.left {
-		padding-left: 0;
-	}
-
-	table.row td.right {
-		padding-right: 0;
-	}
-
-	table.row td {
-		padding: 0 3px 0;
 	}
 
 	article.mobile {

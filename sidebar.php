@@ -9,16 +9,19 @@
 ?>
 <?php if ( is_active_sidebar( 'sidebar-1' )  ) : ?>
 
-	<?php echo '<a class="twitter" href="http://www.twitter.com/YDNsports"><p class="sidebar sidebar-title">@YDNSports</p></a>'; ?>
+	<a class="twitter" href="http://www.twitter.com/YDNsports"><p class="sidebar sidebar-title">@YDNSports</p></a>
 	<aside id="secondary" class="sidebar widget-area" role="complementary">
 		<?php dynamic_sidebar( 'sidebar-1' ); ?>
 	</aside><!-- .sidebar .widget-area -->
-	
 	<?php
 		// update_standings();
 		// update_schedule();
 		schedule();
-		standings();
+		if (is_home()) {
+			standings();			
+		}
 	?>
 
 <?php endif; ?>
+
+<?php possibly_update_standings_schedule(); ?>

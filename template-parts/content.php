@@ -12,65 +12,83 @@ wp_get_attachment_url($post_thumbnail_id)*/
 
 global $counter;
 global $row_mobile;
+global $paged; // the current page number
 
-$top_start = just_variable( "top_start", FALSE);
-$row_start = just_variable( "row_start", FALSE);
+$top_start = 0;
+$row_start = 1;
 
-if($counter == $top_start) {
+if($counter == $top_start && !$paged) {
 	$type = 'top';
-} elseif ($counter == $row_start) {
+} elseif ($counter == $row_start && !$paged) {
 	$type = 'left';
-} elseif ($counter == $row_start + 1) {
+} elseif ($counter == $row_start + 1 && !$paged) {
 	$type = 'center';
-} elseif ($counter == $row_start + 2) {
+} elseif ($counter == $row_start + 2 && !$paged) {
 	$type = 'right';
 } else {
 	$type = 'standard';
 }
 
 if ($type == 'top') : ?>
-<a class="link-wrap" href="<?php the_permalink(); ?>">
-	<div class="top">
-	<article id="post-<?php the_ID(); ?>" <?php post_class('top'); ?>>
-		<div class="post-thumbnail-top">
-		<?php if (class_exists('MultiPostThumbnails')) : ?>
-			<?php MultiPostThumbnails::the_post_thumbnail(get_post_type(), 'homepage-image'); ?>
-
-		<?php else : ?>
-				<?php twentysixteen_post_thumbnail(); ?>
-		<?php endif; ?>
+	<a class="link-wrap" href="<?php the_permalink(); ?>">
+		<div class="top">
+		<article id="post-<?php the_ID(); ?>" <?php post_class('top'); ?>>
+			<?php
+			if (class_exists('MultiPostThumbnails')) {
+				$imageid = MultiPostThumbnails::get_post_thumbnail_id(get_post_type(), 'homepage-image', $post->ID);
+				$url = wp_get_attachment_image_src($imageid, 'large');
+				$url = $url[0];
+			} else {
+				$url = the_post_thumbnail_url();
+			}
+			?>
+			<div class="post-thumbnail-top" style="background-image:url(<?php echo $url; ?>)">
+			<div class="top-title">
+			<?php
+			echo '<h2 class="top-title">'.get_the_title().'</h2>';
+			if (function_exists('coauthors_links')) {
+				ob_start();
+				if (strcmp(coauthors(), 'Yale Daily News')) {
+					ob_end_clean();
+					echo '<h3 class="top-author">By ';
+					coauthors();
+					echo '</h3>';
+				} else {
+					ob_end_clean();
+				}
+			} else {
+				if (strcmp(get_the_author(), 'Yale Daily News')) {
+					echo '<h3 class="top-author">By '.get_the_author().'</h3>';
+				}
+			}
+			?>
+			</div>
+		</article>
 		</div>
-		<div class="top-title">
-		<?php
-		echo '<h2 class="top-title">'.get_the_title().'</h2>';
-		if (function_exists('coauthors')) {
-			echo '<h3 class="top-author">By ';
-			coauthors();
-			echo '</h3>';
-		} else {
-			echo '<h3 class="top-author">By '.get_the_author().'</h3>';			
-		}
-		?>
-		</div>
-
-	</article>
-	</div>
-</a><!--
+	</a><!--
 
 --><?php elseif ($type == 'left' || $type == 'center' || $type == 'right') : ?><!--
- --><table class="row"><tr>
+--><div class="index-post-row">
 	<?php if($type == 'left'): ?>
-		<td class="left">
+		<div class="left">
 	<?php elseif($type == 'center'): ?>
-		<td class="center">
+		<div class="center">
 	<?php elseif($type == 'right'): ?>
-		<td class="right">
+		<div class="right">
 	<?php endif; ?>
-	<a href="<?php the_permalink(); ?>" aria-hidden="true">
-	<div class="container-container"><div class="row-thumbnail-container" style="background-image:url(<?php the_post_thumbnail_url(); ?>)"></div></div>
-	</a></td></tr><tr><td class="row-title">
-	<?php the_title( sprintf( '<h3 class="row-title"><a class="row-title" href="%s">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
-	</td></tr></table><!--
+		<a href="<?php the_permalink(); ?>" aria-hidden="true">
+			<div class="container-container">
+				<div class="row-thumbnail-container" style="background-image:url(<?php the_post_thumbnail_url(); ?>)"></div>
+			</div>
+		</a>
+		<div class="row-title">
+			<?php the_title( sprintf( '<h3 class="row-title"><a class="row-title" href="%s">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
+		</div><!--
+		<div class="sport">
+			<div class="sport-text">Basketball</div>
+		</div>-->
+	</div>
+	</div><!--
 
 --><?php else: ?>
 
@@ -165,7 +183,7 @@ if ($type == 'top') : ?>
 	--><hr class="non-mobile">
 <?php endif; ?><!--
 
---><?php if ($counter == $row_start + 2) : ?><!--
+--><?php if ($type == 'right') : ?><!--
 	--><hr class="non-mobile">
 <?php endif; ?><!--
 

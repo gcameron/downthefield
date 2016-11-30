@@ -66,10 +66,10 @@
 				} else {
 					echo '<a id="tag" href="'.home_url('/').'category/recaps">Recaps</a>';
 				}
-				if (is_category('awards')) {
-					echo '<a id="selected-tag" href="'.home_url('/').'category/awards">Awards</a>';
+				if (is_category('honors')) {
+					echo '<a id="selected-tag" href="'.home_url('/').'category/honors">Honors</a>';
 				} else {
-					echo '<a id="tag" href="'.home_url('/').'category/awards">Awards</a>';
+					echo '<a id="tag" href="'.home_url('/').'category/honors">Honors</a>';
 				}
 				if (is_category('ivies')) {
 					echo '<a id="selected-tag" href="'.home_url('/').'category/ivies">Around the Ivies</a>';

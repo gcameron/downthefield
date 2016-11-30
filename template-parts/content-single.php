@@ -18,7 +18,17 @@
 		
 	</footer><!-- .entry-footer -->
 
-	<?php twentysixteen_post_thumbnail(); ?>
+	<?php if (has_post_thumbnail()): ?>
+		<div class='post-thumbnail'>
+			<?php
+				the_post_thumbnail();
+				$caption = get_post(get_post_thumbnail_id())->post_excerpt;
+				if (!empty($caption)) {
+					echo "<span class='thumbnail-caption'>".$caption."</span>";
+				}
+			?>
+		</div>
+	<?php endif; ?>
 
 	<?php if(!has_post_thumbnail()): ?>
 		<div class="one-em-space"></div>
