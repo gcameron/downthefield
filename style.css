@@ -121,12 +121,12 @@ table td.wide, th.wide{
 }
 
 table td.small, th.small {
-	width:30px;
+	width:19px;
 	font-size:10px;
 }
 
 table td.super-small, th.super-small {
-	width:5px;
+	width:8px;
 	font-size:10px;
 }
 
