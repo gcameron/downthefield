@@ -13,6 +13,7 @@ wp_get_attachment_url($post_thumbnail_id)*/
 global $counter;
 global $row_mobile;
 global $paged;
+global $post;
 
 $top_start = 0;
 $row_start = 1;
@@ -31,16 +32,16 @@ if($counter == $top_start && !$paged) {
 
 if ($type == 'top') : ?>
 	<a class="link-wrap" href="<?php the_permalink(); ?>">
-		<div class="top">
-		<article id="post-<?php the_ID(); ?>" <?php post_class('top'); ?>>
-			<div class="post-thumbnail-top">
-			<?php if (class_exists('MultiPostThumbnails')) : ?>
-				<?php MultiPostThumbnails::the_post_thumbnail(get_post_type(), 'homepage-image'); ?>
-
-			<?php else : ?>
-					<?php twentysixteen_post_thumbnail(); ?>
-			<?php endif; ?>
-			</div>
+		<div class="top-article-container">
+			<div class="top-article-hover-container"></div>
+			<?php if (class_exists('MultiPostThumbnails')) {
+				$imageid = MultiPostThumbnails::get_post_thumbnail_id(get_post_type(), 'homepage-image', $post->ID);
+				$imageurl = wp_get_attachment_image_src($imageid,'large');
+			} else {
+				$imageurl = get_the_post_thumbnail_url();
+			}
+			echo '<div class="post-thumbnail-top-container" style="background-image:url('.$imageurl[0].')"></div>';
+			?>
 			<div class="top-title">
 			<?php
 			echo '<h2 class="top-title">'.get_the_title().'</h2>';
@@ -61,8 +62,6 @@ if ($type == 'top') : ?>
 			}
 			?>
 			</div>
-
-		</article>
 		</div>
 	</a><!--
 
