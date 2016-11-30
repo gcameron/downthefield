@@ -5,7 +5,7 @@ Author: Greg Cameron
 Author URI: https://wordpress.org/
 Description: Child theme of twentysixteendtf
 Template: twentysixteen
-Version: 1.0.7
+Version: 1.0.8
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: black, blue, gray, pink, purple, white, yellow, dark, light, two-columns, left-sidebar, fixed-layout, responsive-layout, accessibility-ready, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-images, microformats, post-formats, rtl-language-support, sticky-post, threaded-comments, translation-ready
@@ -317,7 +317,7 @@ a.row-title:active {
 div.top-article-container {
 	display: none;
 	background-color: white;
-	margin-bottom: 9px;
+	margin-bottom: 3px;
 	position: relative;
 	height: 360px;
 }
@@ -566,16 +566,16 @@ p, h1, h2, h3, h4 {
 
 	table.index-post-row td.left .container-container {
 		left: 0;
-		right: 6px;
+		right: 2px;
 	}
 
 	table.index-post-row td.center .container-container {
-		left: 3px;
-		right: 3px;
+		left: 1px;
+		right: 1px;
 	}
 
 	table.index-post-row td.right .container-container {
-		left: 6px;
+		left: 2px;
 		right: 0;
 	}
 
