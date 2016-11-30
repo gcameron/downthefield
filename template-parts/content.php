@@ -33,23 +33,23 @@ if($counter == $top_start && !$paged) {
 if ($type == 'top') : ?>
 	<a class="link-wrap" href="<?php the_permalink(); ?>">
 		<div class="top-article-container">
-			<div class="top-article-hover-container"></div>
+			<div class="top-article-color-overlay"></div>
 			<?php if (class_exists('MultiPostThumbnails')) {
 				$imageid = MultiPostThumbnails::get_post_thumbnail_id(get_post_type(), 'homepage-image', $post->ID);
 				$imageurl = wp_get_attachment_image_src($imageid,'large');
 			} else {
 				$imageurl = get_the_post_thumbnail_url();
 			}
-			echo '<div class="post-thumbnail-top-container" style="background-image:url('.$imageurl[0].')"></div>';
+			echo '<div class="top-article-thumbnail" style="background-image:url('.$imageurl[0].')"></div>';
 			?>
-			<div class="top-title">
+			<div class="top-article-title">
 			<?php
-			echo '<h2 class="top-title">'.get_the_title().'</h2>';
+			echo '<h2 class="top-article-title-text">'.get_the_title().'</h2>';
 			if (function_exists('coauthors_links')) {
 				ob_start();
 				if (strcmp(coauthors(), 'Yale Daily News')) {
 					ob_end_clean();
-					echo '<h3 class="top-author">By ';
+					echo '<h3 class="top-article-author-text">By ';
 					coauthors();
 					echo '</h3>';
 				} else {

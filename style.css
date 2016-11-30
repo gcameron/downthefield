@@ -266,7 +266,7 @@ table.index-post-row {
 	margin-bottom: 3.5em;
 }
 
-h2.top-title {
+h2.top-article-title-text {
 	font-family: Georgia, serif;
 	font-weight: 600;
 	line-height: 1.2;
@@ -278,7 +278,7 @@ h2.top-title {
 	text-align: center;
 }
 
-h3.top-author {
+h3.top-article-author-text {
 	font-family: Georgia, serif;
 	margin-top:2%;
 	font-size: 18px;
@@ -322,7 +322,7 @@ div.top-article-container {
 	height: 360px;
 }
 
-div.top-article-hover-container::after {
+div.top-article-color-overlay::after {
 	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
 	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(66, 180, 255, 0.45) 100%), no-repeat;
@@ -337,7 +337,7 @@ div.top-article-hover-container::after {
 	position: absolute;
 }
 
-div.top-article-container:hover > div.top-article-hover-container::after {
+div.top-article-container:hover > div.top-article-color-overlay::after {
 	background: -moz-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
 	background: -webkit-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
 	background: -o-linear-gradient(to top right, rgba(0, 0, 0, 0.5) 0%, rgba(40, 130, 200, 0.25) 100%), no-repeat;
@@ -352,7 +352,7 @@ div.top-article-container:hover > div.top-article-hover-container::after {
 	position: absolute;
 }
 
-div.post-thumbnail-top-container {
+div.top-article-thumbnail {
 	z-index: 0;
 	position: absolute;
 	top: 0;
@@ -364,7 +364,7 @@ div.post-thumbnail-top-container {
 	background-repeat: no-repeat;
 }
 
-div.top-title {
+div.top-article-title {
 	position:absolute;
 	width: 100%;
 	top: 50%;
