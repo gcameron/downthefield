@@ -5,7 +5,7 @@ Author: Greg Cameron
 Author URI: https://wordpress.org/
 Description: Child theme of twentysixteendtf
 Template: twentysixteen
-Version: 1.0.8
+Version: 1.0.9
 License: GNU General Public License v2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: black, blue, gray, pink, purple, white, yellow, dark, light, two-columns, left-sidebar, fixed-layout, responsive-layout, accessibility-ready, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-images, microformats, post-formats, rtl-language-support, sticky-post, threaded-comments, translation-ready
@@ -514,6 +514,10 @@ p, h1, h2, h3, h4 {
 
 @media screen and (min-width: 60.375em) {
 
+	article.has-post-thumbnail .main-thumbnail-container {
+		max-height: 230px;
+	}
+
 	div.top-article-container {
 		display:block;
 	}
@@ -554,7 +558,7 @@ p, h1, h2, h3, h4 {
 		padding: 0 3px 0;
 	}
 
-	table.index-post-row .container-container {
+	table.index-post-row .row-thumbnail-container-container {
 		margin: 0;
 		position: absolute;
 		top: 0;
@@ -564,22 +568,22 @@ p, h1, h2, h3, h4 {
 		padding-left: 3px;
 	}
 
-	table.index-post-row td.left .container-container {
+	table.index-post-row td.left .row-thumbnail-container-container {
 		left: 0;
 		right: 2px;
 	}
 
-	table.index-post-row td.center .container-container {
+	table.index-post-row td.center .row-thumbnail-container-container {
 		left: 1px;
 		right: 1px;
 	}
 
-	table.index-post-row td.right .container-container {
+	table.index-post-row td.right .row-thumbnail-container-container {
 		left: 2px;
 		right: 0;
 	}
 
-	div.container-container:hover {
+	div.container-container:hover, div.main-thumbnail-container-container:hover {
 		opacity: 0.85;
 	}
 
@@ -603,7 +607,7 @@ p, h1, h2, h3, h4 {
 
 	article.has-post-thumbnail .main-thumbnail-container {
 		position: absolute;
-		left: 10px;
+		left: 16px;
 		right: 0;
 		bottom: 0;
 		top: 0;

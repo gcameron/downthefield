@@ -535,7 +535,7 @@ function remove_parent_filters(){ //Have to do it after theme setup, because chi
 
 add_action( 'after_setup_theme', 'remove_parent_filters' );
 
-// this ellipsis looks better than the one the parent theme has
+// this ellipsis looks better than
 function space() {
 	return " … ";
 }
