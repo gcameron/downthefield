@@ -81,6 +81,11 @@ if ($type == 'top') : ?>
 	</td>
 	</tr>
 	<tr>
+		<td class="sport">
+			FOOTBAll
+		</td>
+	</tr>
+	<tr>
 		<td class="row-title">
 			<?php the_title( sprintf( '<h3 class="row-title"><a class="row-title" href="%s">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
 		</td>
