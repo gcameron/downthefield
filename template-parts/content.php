@@ -65,32 +65,24 @@ if ($type == 'top') : ?>
 	</a><!--
 
 --><?php elseif ($type == 'left' || $type == 'center' || $type == 'right') : ?><!--
---><table class="index-post-row"><tr>
+--><div class="index-post-row"><tr>
 	<?php if($type == 'left'): ?>
-		<td class="left">
+		<div class="left">
 	<?php elseif($type == 'center'): ?>
-		<td class="center">
+		<div class="center">
 	<?php elseif($type == 'right'): ?>
-		<td class="right">
+		<div class="right">
 	<?php endif; ?>
 		<a href="<?php the_permalink(); ?>" aria-hidden="true">
 			<div class="row-thumbnail-container-container">
-				<div class="row-thumbnail-container" style="background-image:url(<?php the_post_thumbnail_url(); ?>)" />
+				<div class="row-thumbnail-container" style="background-image:url(<?php the_post_thumbnail_url(); ?>)"></div>
 			</div>
 		</a>
-	</td>
-	</tr>
-	<tr>
-		<td class="sport">
-			FOOTBAll
-		</td>
-	</tr>
-	<tr>
-		<td class="row-title">
+		<div class="row-title">
 			<?php the_title( sprintf( '<h3 class="row-title"><a class="row-title" href="%s">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
-		</td>
-	</tr>
-	</table><!--
+		</div>
+	</div>
+	</div><!--
 
 --><?php else: ?>
 

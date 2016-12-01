@@ -235,7 +235,7 @@ header#site-header nav#site-navigation a#selected-tag {
 }
 
 /* don't show row of stories on mobile */
-table.index-post-row {
+div.index-post-row {
 	display: none;
 }
 
@@ -539,51 +539,58 @@ p, h1, h2, h3, h4 {
 		vertical-align: top;
 	}
 
-	table.index-post-row {
+	div.index-post-row {
 		position: relative;
 		width: 33.333333333%;
-		padding-bottom: 0px;
+		padding-bottom: 16px;
 		display: inline-block;
-		vertical-align:top;
 	}
 
 	div.row-thumbnail-container {
 		margin: 0;
 	}
 
-	table.index-post-row td.left,
-	table.index-post-row td.center,
-	table.index-post-row td.right {
-		height: 150px;
-		padding: 0 3px 0;
+	div.index-post-row div.left,
+	div.index-post-row div.center,
+	div.index-post-row div.right {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		padding-top: 0px;
+		padding-bottom: 3px;
 	}
 
-	table.index-post-row .row-thumbnail-container-container {
+	div.index-post-row div.row-thumbnail-container-container {
 		margin: 0;
-		position: absolute;
-		top: 0;
+		flex: 0;
 	}
 
-	table.index-post-row td.row-title {
-		padding-left: 3px;
+	div.index-post-row div.center div.row-title {
+		margin-left: 2px;
 	}
 
-	table.index-post-row td.left .row-thumbnail-container-container {
-		left: 0;
-		right: 2px;
+	div.index-post-row div.row-title {
+		flex: 1;
+		margin-right: 5px;
+		margin-top: 12px;
 	}
 
-	table.index-post-row td.center .row-thumbnail-container-container {
-		left: 1px;
-		right: 1px;
+	div.index-post-row div.left .row-thumbnail-container-container {
+		padding-left: 0px;
+		padding-right: 1px;
 	}
 
-	table.index-post-row td.right .row-thumbnail-container-container {
-		left: 2px;
-		right: 0;
+	div.index-post-row div.center .row-thumbnail-container-container {
+		padding-left: 2px;
+		padding-right: 2px;
 	}
 
-	div.container-container:hover, div.main-thumbnail-container-container:hover {
+	div.index-post-row div.right .row-thumbnail-container-container {
+		padding-left: 1px;
+		padding-right: 0px;
+	}
+
+	div.row-thumbnail-container-container:hover, div.main-thumbnail-container-container:hover {
 		opacity: 0.85;
 	}
 
@@ -598,11 +605,9 @@ p, h1, h2, h3, h4 {
 	}
 
 	h3.row-title {
-		margin-top: 5px;
 		font-family: Georgia, serif;
 		line-height: 1.3;
 		vertical-align: top;
-		margin-right: 0.3%;
 	}
 
 	article.has-post-thumbnail .main-thumbnail-container {
