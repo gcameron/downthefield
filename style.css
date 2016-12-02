@@ -565,14 +565,29 @@ p, h1, h2, h3, h4 {
 		flex: 0;
 	}
 
-	div.index-post-row div.center div.row-title {
+	div.index-post-row div.center div.row-title,
+	div.index-post-row div.center div.row-sport {
 		margin-left: 2px;
+	}
+
+	div.index-post-row div.row-sport,
+	div.index-post-row div.row-title {
+		margin-right: 5px;
+	}
+
+	div.index-post-row div.row-sport {
+		margin-top: 8px;
+		flex: 0;
+		font-family: Avenir, sans-serif;
+		text-transform: uppercase;
+		font-weight: 600;
+		font-size: 14px;
 	}
 
 	div.index-post-row div.row-title {
 		flex: 1;
 		margin-right: 5px;
-		margin-top: 12px;
+		margin-top: 2px;
 	}
 
 	div.index-post-row div.left .row-thumbnail-container-container {

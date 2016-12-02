@@ -165,7 +165,7 @@ function get_table($tables, $i) {
 	}   
 
 	$table = array();
-		//get all rows from the table 
+	//get all rows from the table 
 
 	foreach ($rows as $row) {   
 			// get each column by tag name  
@@ -216,111 +216,31 @@ function get_table($tables, $i) {
 	return $newtable;
 }
 
-function get_schedule($tables) {
-	// get each column by tag name  
-	$rows = $tables->item(0)->getElementsByTagName('tr');  
-	$cols = $rows->item(0)->getElementsByTagName('th');
-	$row_headers = NULL;
-
-	foreach ($cols as $node) {
-		$row_headers[] = $node->nodeValue;
-	}   
-
-	$table = array();
-
-	// this code takes the HTML node for the schedule table and decides how many games to include
-	// there is a cap for number of games to include and number of days to include, but we never
-	// stop within a day. thus when the games cap is reached, $cooldown is set to True, we include
-	// the remaining games in that day then stop
-
-	// each game has a team and opponent, which are found in a row with class "info", possibly a score, which is
-	// also found in the "info" row, and possibly a time, which is found in a row with class "links"
-
-	$games_used = 0;
-	$j = 0; // number of cells identified for current game - 1 means we have the team, 2 means we have the
-			// opponent, 3 means we have the time or score
-	$cooldown = False; // if cooldown is set to true, we include the remaining games in the current day then stop
-	$days_used = 0;
-	foreach($rows as $row) {
-		if (!$row->hasAttribute('class')) continue; // just making sure we have a class
-		$class = $row->getAttribute('class');
-
-		if (!strcmp('links', $class)) { // this row has the time
-			$str = $row->nodeValue;
-			$time = "";
-			if($j >= 3) { // we already got the score, so none of this is necessary
-				$table[] = $newrow;
-				continue;
-			}
-
-			// find time from row, which always has a colon in it and an &nbsp to end it
-			$k = 0;
-			$len = strlen($str);
-			while($k < $len && strcmp(substr($str, $k, 1),':')) $k++;
-			if($k < $len) {
-				if(ctype_digit(substr($str, $k-2, 1))) {
-					$time_start = $k - 2;
-				} else {
-					$time_start = $k - 1;
-					$time = substr($str, $k-1, 7);
-				}
-				while($k < $len && strcmp(substr($str, $k, 1),'&')) $k++;
-				$time_end = $k - $time_start;
-				$time = substr($str, $time_start, $time_end);
-			}
-			$newrow[] = $time;
-			$table[] = $newrow; // add game to main table
-
-		} else if(!strcmp('info', $class)) { // this row has the team, opponent and possibly score
-			$games_used++;
-			$cols = $row->getElementsByTagName('td');   
-			$newrow = array();
-			$j = 0; // start new game for next row
-			foreach ($cols as $node) {
-				if(!strcmp(trim($node->nodeValue),"")) continue;
-				if($j >= 3) {
-					$j++;
-					continue;
-				}
-				if($row_headers==NULL)
-					$newrow[] = trim($node->nodeValue);
-				else
-					$newrow[$row_headers[$j]] = trim($node->nodeValue);
-				$j++;
-			}
-			if($games_used >= 12) $cooldown = True;
-
-		} else if(!strcmp('date', $class)) { // this row has the date
-			if($cooldown) break;
-			$days_used++;
-			if($days_used >= 3) {
-				$cooldown = True; // this will be our last day included
-			}
-			$cols = $row->getElementsByTagName('td');   
-			$newrow = array();
-			$j = 0; // start new game for next row
-			foreach ($cols as $node) {
-				if($j >= 1) continue;
-				if($row_headers==NULL)
-					$newrow[] = trim($node->nodeValue);
-				else
-					$newrow[$row_headers[$j]] = trim($node->nodeValue);
-				$j++;
-			}
-			$table[] = $newrow; // add time to main table
-		}
-	}
-	return $table;
-}
-
 function update_schedule() {
 	if (!file_exists('yaleschedule/')) {
 		mkdir('yaleschedule');
 	}
-	file_put_contents('yaleschedule/schedule.html', wp_remote_fopen('http://www.yalebulldogs.com/landing/index'));
-}
+	$schedule_str = wp_remote_fopen('http://www.yalebulldogs.com/composite?print=rss');
+	$schedule = simplexml_load_string($schedule_str);
+	$fp = fopen('yaleschedule/schedule.csv', 'w');
+	foreach($schedule->channel->item as $item) {
+		$dc = $item->children('http://purl.org/dc/elements/1.1/');
+		$date = strtotime((string)$dc->date);
 
-add_action('updated_schedule_hook', 'update_schedule');
+		$ps = $item->children('http://www.prestosports.com/rss/schedule');
+		$opponent = (string)$ps->opponent;
+
+		if ($date && $date >= time()) {
+			$fields = array();
+			$fields[] = (string)$item->category;
+			$fields[] = (string)$opponent;
+			$fields[] = (string)$date;
+			$fields[] = (string)$item->description;
+			fputcsv($fp, $fields);
+		}
+	}
+	fclose($fp);
+}
 
 function update_standings() {
 	if (!file_exists('ivyleaguestandings/')) {
@@ -352,26 +272,91 @@ function update_standings() {
 	}
 }
 
-add_action('updated_standings_hook', 'update_standings');
+function find_time($str) {
+	$str = str_replace(array('a.m.','p.m.', 'A.M.', 'P.M.'), array('am','pm', 'am', 'pm'), $str);
+	$len = strlen($str);
+	for ($i = 0; $i < $len - 2; $i++) {
+		if (!is_numeric($str[$i])) {
+			continue;
+		}
+		if ($str[$i] == '0') {
+			continue;
+		}
+		if (is_numeric($str[$i + 1])) {
+			if ($str[$i] != '1') {
+				continue;
+			}
+			$colon = $i + 2;
+		} else {
+			$colon = $i + 1;
+		}
+		if ($str[$colon] == ' ') {
+			$ampm = $colon + 1;
+		} else if ($str[$colon] != ':') {
+			continue;
+		} else {
+			if ($colon + 2 >= $len || !is_numeric($str[$colon + 1]) || !is_numeric($str[$colon + 2])) {
+				continue;
+			}
+			$ampm = $colon + 3;
+		}
+		if ($ampm >= $len) {
+			continue;
+		}
+		if ($str[$ampm] == ' ') {
+			$ampm++;
+		}
+		if ($ampm + 1 >= $len || (strcmp(substr($str, $ampm, 2), 'am') && strcmp(substr($str, $ampm, 2), 'pm'))) {
+			continue;
+		}
+		return substr($str, $i, $ampm + 2 - $i);
+	}
+	return '';
+}
 
 function schedule() {
-	// load the html  
-	$dom = new DOMDocument();
-	$internalErrors = libxml_use_internal_errors(true);
-	$html = $dom->loadHTMLFile('yaleschedule/schedule.html');  
-	libxml_use_internal_errors($internalErrors);
+	date_default_timezone_set('America/New_York');
+	$max_games = 7;
+	$file = fopen('yaleschedule/schedule.csv', 'r');
 
-	// discard white space   
-	$dom->preserveWhiteSpace = false;
+	$schedule_array = array();
 
-	//the table by its tag name  
-	$tables = $dom->getElementsByTagName('table');   
+	$new_row = array();
 
-	//get all rows from the table  
-	$table = get_schedule($tables);
+	$former_date = '';
 
-	echo build_schedule($table);
-
+	$games_used = 0;
+	$cooldown = 0;
+	while ($row = fgetcsv($file)) {
+		if (!strcmp($row[0], '')) {
+			continue;
+		}
+		$date = date('l, F j, Y', (int)$row[2]);
+		if (strcmp($former_date, $date)) {
+			if ($cooldown) {
+				break;
+			}
+			$new_row[] = $date;
+			$schedule_array[] = $new_row;
+			$new_row = array();
+			$former_date = $date;
+		}
+		$new_row[] = $row[0];
+		$new_row[] = $row[1];
+		$date = date('g:i a', (int)$row[2]);
+		if (!strcmp($date, '12:00 am')) {
+			$new_row[] = str_replace(array('am','pm', 'AM', 'PM', 'A.M.', 'P.M.'), array('a.m.','p.m.', 'a.m.', 'p.m.', 'a.m.', 'p.m.'), find_time($row[3]));
+		} else {
+			$new_row[] = str_replace(array('am','pm', 'AM', 'PM', 'A.M.', 'P.M.'), array('a.m.','p.m.', 'a.m.', 'p.m.', 'a.m.', 'p.m.'), $date);
+		}
+		$schedule_array[] = $new_row;
+		$new_row = array();
+		$games_used++;
+		if ($games_used >= $max_games) {
+			$cooldown = 1;
+		}
+	}
+	echo build_schedule($schedule_array);
 }
 
 function standings() {
@@ -437,11 +422,10 @@ function standings() {
 		}
 		echo build_table($newtable, $arr[$sport][2]);
 	}
-
 }
 
 // give contributor permission to upload photos
-if ( current_user_can('contributor') && !current_user_can('upload_files') ) {
+if (current_user_can('contributor') && !current_user_can('upload_files') ) {
 	add_action('admin_init', 'allow_contributor_uploads');
 }
 
@@ -452,7 +436,6 @@ function allow_contributor_uploads() {
 
 // allow for home page image upload
 if (class_exists('MultiPostThumbnails')) {
-
 	new MultiPostThumbnails(array(
 		'label' => 'Home Page Image (will be cropped as roughly 2:1 horizontal)',
 		'id' => 'homepage-image',
@@ -543,9 +526,6 @@ function space() {
 add_filter( 'excerpt_more', 'space' );
 
 function possibly_update_standings_schedule() {
-	if (!file_exists('yaleschedule/')) {
-		mkdir('yaleschedule');
-	}
 	if (!file_exists('yaleschedule/last_update.txt')) {
 		$f = fopen("yaleschedule/last_update.txt", "w");
 		update_schedule();

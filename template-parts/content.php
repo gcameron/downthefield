@@ -78,6 +78,9 @@ if ($type == 'top') : ?>
 				<div class="row-thumbnail-container" style="background-image:url(<?php the_post_thumbnail_url(); ?>)"></div>
 			</div>
 		</a>
+		<div class="row-sport">
+			Men's Basketball
+		</div>
 		<div class="row-title">
 			<?php the_title( sprintf( '<h3 class="row-title"><a class="row-title" href="%s">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
 		</div>

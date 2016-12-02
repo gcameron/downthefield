@@ -15,6 +15,7 @@
 	</aside><!-- .sidebar .widget-area -->
 	
 	<?php
+		possibly_update_standings_schedule();
 		// update_standings();
 		// update_schedule();
 		schedule();
