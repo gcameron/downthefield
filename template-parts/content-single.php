@@ -9,16 +9,24 @@
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+	<?php
+		if (is_single()):
+			$sport_name = find_sport_category();
+			if ($sport_name) : ?>
+				<div class="row-sport"><?php echo $sport_name; ?></div>
+		<?php endif; endif;
+	?>
+
+
 	<header class="entry-header">
 		<?php the_title( '<h1 class="entry-title single-title">', '</h1>' ); ?>
 	</header><!-- .entry-header -->
 
  	<footer class="entry-footer footer-single">
 		<?php downthefield_entry_meta(); ?>
-		
 	</footer><!-- .entry-footer -->
 
-	<?php twentysixteen_post_thumbnail(); ?>
+	<?php downthefield_post_thumbnail(); ?>
 
 	<?php if(!has_post_thumbnail()): ?>
 		<div class="one-em-space"></div>
@@ -36,10 +44,6 @@
 				'pagelink'    => '<span class="screen-reader-text">' . __( 'Page', 'twentysixteen' ) . ' </span>%',
 				'separator'   => '<span class="screen-reader-text">, </span>',
 			) );
-
-			if ( '' !== get_the_author_meta( 'description' ) ) {
-				get_template_part( 'template-parts/biography' );
-			}
 		?>
 	</div><!-- .entry-content -->
 

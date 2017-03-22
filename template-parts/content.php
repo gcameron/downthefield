@@ -36,13 +36,18 @@ if ($type == 'top') : ?>
 			<?php if (class_exists('MultiPostThumbnails')) {
 				$imageid = MultiPostThumbnails::get_post_thumbnail_id(get_post_type(), 'homepage-image', $post->ID);
 				$imageurl = wp_get_attachment_image_src($imageid,'large');
+				$imageurl = $imageurl[0];
 			} else {
 				$imageurl = get_the_post_thumbnail_url();
 			}
-			echo '<div class="top-article-thumbnail" style="background-image:url('.$imageurl[0].')"></div>';
+			echo '<div class="top-article-thumbnail" style="background-image:url('.$imageurl.')"></div>';
 			?>
 			<div class="top-article-title">
 			<?php
+			$sport_name = find_sport_category();
+			if ($sport_name) : ?>
+				<div class="top-article-sport-text"><?php echo $sport_name; ?></div>
+			<?php endif;
 			echo '<h2 class="top-article-title-text">'.get_the_title().'</h2>';
 			if (function_exists('coauthors_links')) {
 				ob_start();
@@ -72,15 +77,24 @@ if ($type == 'top') : ?>
 		<div class="center">
 	<?php elseif($type == 'right'): ?>
 		<div class="right">
-	<?php endif; ?>
+	<?php endif;
+		if (class_exists('MultiPostThumbnails')) {
+			$imageid = MultiPostThumbnails::get_post_thumbnail_id(get_post_type(), 'homepage-image', $post->ID);
+			$imageurl = wp_get_attachment_image_src($imageid,'large');
+			$imageurl = $imageurl[0];
+		} else {
+			$imageurl = get_the_post_thumbnail_url();
+		} ?>
 		<a href="<?php the_permalink(); ?>" aria-hidden="true">
 			<div class="row-thumbnail-container-container">
-				<div class="row-thumbnail-container" style="background-image:url(<?php the_post_thumbnail_url(); ?>)"></div>
+				<div class="row-thumbnail-container" style="background-image:url(<?php echo $imageurl; ?>)"></div>
 			</div>
 		</a>
-		<div class="row-sport">
-			Men's Basketball
-		</div>
+		<?php
+			$sport_name = find_sport_category();
+			if ($sport_name) : ?>
+				<div class="row-sport"><?php echo $sport_name; ?></div>
+			<?php endif; ?>
 		<div class="row-title">
 			<?php the_title( sprintf( '<h3 class="row-title"><a class="row-title" href="%s">', esc_url( get_permalink() ) ), '</a></h3>' ); ?>
 		</div>
@@ -98,7 +112,11 @@ if ($type == 'top') : ?>
 		<?php endif; ?>
 
 		<table class="entry"><tr><td class="content">
-
+		<?php
+			$sport_name = find_sport_category();
+			if ($sport_name) : ?>
+				<div class="main-list-sport"><?php echo $sport_name; ?></div>
+			<?php endif; ?>
 		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 
 		<footer class="entry-footer">
@@ -126,7 +144,6 @@ if ($type == 'top') : ?>
 				) );
 			?>
 		</div></td><td class="thumbnail">
-
 		<a href="<?php the_permalink(); ?>" aria-hidden="true">
 		<div class="main-thumbnail-container-container"><div class="main-thumbnail-container" style="background-image:url(<?php the_post_thumbnail_url(); ?>)"></div></div>
 		</a></td></tr></table>
@@ -143,12 +160,14 @@ if ($type == 'top') : ?>
 			<?php if ( is_sticky() && is_home() && ! is_paged() ) : ?>
 				<span class="sticky-post"><?php _e( 'Featured', 'twentysixteen' ); ?></span>
 			<?php endif; ?>
-
+		<?php
+			$sport_name = find_sport_category();
+			if ($sport_name) : ?>
+				<div class="main-list-sport"><?php echo $sport_name; ?></div>
+			<?php endif; ?>
 			<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 		</header><!-- .entry-header -->
-		<a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true">
-			<?php downthefield_post_thumbnail(); ?>
-		</a>
+		<?php downthefield_post_thumbnail(); ?>
 		<footer class="entry-footer">
 			<?php downthefield_entry_meta(); ?>
 		</footer><!-- .entry-footer -->

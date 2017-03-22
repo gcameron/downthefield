@@ -5,14 +5,36 @@ function theme_enqueue_styles() {
     wp_enqueue_style($parent_style, get_template_directory_uri() . '/style.css' );
 }
 
-function build_table($array, $wideNum) {
+
+
+function build_html_table($array, $sport_key) {
     // start table
     $html = '<table class="sidebar sidebar-table"><thead>';
     // header row
 
+    if($sport_key == OLD_BASEBALL_SOFTBALL) {
+    	$wide_column_index = 0;
+    } else {
+    	$wide_column_index = 1;
+    }
+
     $odd = False;
-    $first = True;
-    // data rows
+    $first_row = True;
+
+
+    // test to see if first column (which generally holds league rank)
+    // in empty throughout table
+    if(!strcmp($array[1][0], "1")) {
+    	$use_first_column = True;
+    	$wide_column_index = 1;
+    } else if (!strcmp($array[1][0], "")) {
+    	$use_first_column = False;
+    	$wide_column_index = 1;
+    } else {
+    	$use_first_column = True;
+    	$wide_column_index = 0;
+    }
+
     foreach( $array as $key=>$value){
     	if(!strcmp($value[0], "Yale") || !strcmp($value[1], "Yale")) {
     		$html .= '<tr class="yale">';
@@ -22,27 +44,30 @@ function build_table($array, $wideNum) {
     		$html .= '<tr class="even">';
     	}
         $len = count($value);
+	    $first_col = True;
         foreach($value as $key2=>$value2) {
-        	if($first) {
+        	if($key2 == 0 && !$use_first_column) {
+        		continue;
+        	}
+        	if($key == 0) {
         		$html .= '<th ';
         	} else {
         		$html .= '<td ';
         	}
-        	if($i < $wideNum) {
+        	if($key2 < $wide_column_index) {
         		$html .= 'class="super-small">' . $value2;
-        	} else if ($i == $wideNum) {
+        	} else if ($key2 == $wide_column_index) {
         		$html .= 'class="wide">' . $value2;
         	} else {
         		$html .= 'class="small">' . $value2;
         	}
-        	if($first) {
+        	if($key == 0) {
         		$html .= '</th>';
         	} else {
         		$html .= '</td>';
         	}
-        	$i++;
         }
-        if($first) {
+        if($key == 0) {
         	$html .= '</tr></thead><tbody>';
         	$first = False;
         } else {
@@ -106,22 +131,18 @@ function delete_col(&$array, $offset) {
     });
 }
 
-function hockey_standings($dom, $sport_name) {
+function hockey_standings($dom, $sport_name, $sport_key) {
 	$tables = $dom->getElementsByTagName('table');
 
 	$standings_table = NULL;
 	foreach ($tables as $table) {
-		if ($table->hasAttribute('class')) {
-			$class = $table->getAttribute('class');
-			if (!strcmp($class, 'briefstats-table')) {
-				$standings_table = $table;
-				break;
-			}
+		if (!$table->hasAttribute('class')) {
+			$standings_table = $table;
 		}
 	}
 
 	if (!$standings_table) {
-		return '';
+		return;
 	}
 
 	$rows = $tables->item($i)->getElementsByTagName('tr');
@@ -136,24 +157,39 @@ function hockey_standings($dom, $sport_name) {
 
 	$table[] = $header_row;
 
-	$counter = 0;
+	$row_counter = 0;
+	$team_counter = 1;
+	$last_points = 100000;
 	foreach ($rows as $row) {
-		if ($counter++ == 0) {
+		if ($row_counter++ < 2) {
 			continue;
 		}
+		$col_counter = 0;
 		$cols = $row->getElementsByTagName('td');   
 		$row = array();
-		foreach ($cols as $node) {
-			$row[] = $node->nodeValue;
+		$row[] = $current_rank;
+		foreach ($cols as $col) {
+			if ($col_counter <= 2 || $col_counter == 8) {
+				$row[] = trim($col->nodeValue);
+			}
+			if ($col_counter == 1) {
+				$points = intval(trim($col->nodeValue));
+				if ($points < $last_points) {
+					$row[0] = $team_counter;
+				}
+				$team_counter++;
+				$last_points = $points;
+			}
+			$col_counter++;
 		}
 		$table[] = $row;
 	}
 
 	echo '<p class="sidebar sidebar-title">ECAC '.$sport_name.' Standings</p>';
-	echo build_table($table, 1);
+	echo build_table($table, $sport_key);
 }
 
-function get_table($tables, $i) {
+function old_format_table($tables, $i) {
 	// get each column by tag name  
 	$rows = $tables->item($i)->getElementsByTagName('tr');
 	$cols = $rows->item(0)->getElementsByTagName('th');
@@ -165,7 +201,6 @@ function get_table($tables, $i) {
 	}   
 
 	$table = array();
-	//get all rows from the table 
 
 	foreach ($rows as $row) {   
 			// get each column by tag name  
@@ -216,6 +251,83 @@ function get_table($tables, $i) {
 	return $newtable;
 }
 
+function old_baseball_softball_standings($dom, $sport_name, $sport_key) {
+	$tables = $dom->getElementsByTagName('table');
+
+	$formatted_table = old_format_table($tables, 0);
+
+	echo '<p class="sidebar sidebar-title">Ivy League '.$sport_name.' Standings</p>';
+	if(!strcmp($sport_name, "Baseball")) {
+		echo '<p class="sidebar sidebar-subtitle">Red Rolfe Division</p>';
+		echo build_html_table($formatted_table, $sport_key);
+		echo '<p class="sidebar sidebar-subtitle">Lou Gehrig Division</p>';
+		$formatted_table = old_format_table($tables, 1);
+	}
+	if(!strcmp($sport_name, "Softball")) {
+		echo '<p class="sidebar sidebar-subtitle">North Division</p>';
+		echo build_html_table($formatted_table, $sport_key);
+		echo '<p class="sidebar sidebar-subtitle">South Division</p>';
+		$formatted_table = old_format_table($tables, 1);
+	}
+	echo build_html_table($formatted_table, $sport_key);
+}
+
+function new_format_table($tables, $i) {
+	$standings_table = $tables[$i];
+
+	//get all rows from the table  
+	$rows = $standings_table->getElementsByTagName('tr');
+
+	$table = array();
+	$header_row = array();
+	$header_row[] = '';
+	$header_row[] = '';
+	$header_row[] = 'Conference';
+	$header_row[] = 'Overall';
+
+	$table[] = $header_row;
+
+	$row_counter = 0;
+	foreach ($rows as $row) {
+		if ($row_counter++ < 2) {
+			continue;
+		}
+		$col_counter = 0;
+		$cols = $row->getElementsByTagName('td');
+		$row = array();
+		foreach ($cols as $col) {
+			if ($col_counter < 2 || $col_counter == 3 || $col_counter == 9) {
+				$row[] = trim($col->nodeValue);
+			}
+			$col_counter++;
+		}
+		$table[] = $row;
+	}
+	return $table;
+}
+
+function standard_standings($dom, $sport_name, $sport_key) {
+	$tables = $dom->getElementsByTagName('table');
+	if (!$tables) {
+		return;
+	}
+	$formatted_table = new_format_table($tables, 0);
+	echo '<p class="sidebar sidebar-title">Ivy League '.$sport_name.' Standings</p>';
+	if(!strcmp($sport_name, "Baseball")) {
+		echo '<p class="sidebar sidebar-subtitle">Red Rolfe Division</p>';
+		echo build_html_table($formatted_table, $sport_key);
+		echo '<p class="sidebar sidebar-subtitle">Lou Gehrig Division</p>';
+		$formatted_table = new_format_table($tables, 1);
+	}
+	if(!strcmp($sport_name, "Softball")) {
+		echo '<p class="sidebar sidebar-subtitle">North Division</p>';
+		echo build_html_table($formatted_table, $sport_key);
+		echo '<p class="sidebar sidebar-subtitle">South Division</p>';
+		$formatted_table = new_format_table($tables, 1);
+	}
+	echo build_html_table($formatted_table, $sport_key);
+}
+
 function update_schedule() {
 	if (!file_exists('yaleschedule/')) {
 		mkdir('yaleschedule');
@@ -247,25 +359,25 @@ function update_standings() {
 		mkdir('ivyleaguestandings');
 	}
 	$arr = array(
-		array("http://www.ivyleaguesports.com/sports/mbkb/2016-17/standings",		"ivyleaguestandings/mensbasketball.html"),
-		array("http://www.ivyleaguesports.com/sports/wbkb/2016-17/standings",		"ivyleaguestandings/womensbasketball.html"),		
-		array("http://www.ecachockey.com/men/index",								"ivyleaguestandings/menshockey.html"),
-		array("http://www.ecachockey.com/women/index",								"ivyleaguestandings/womenshockey.html"),
-		array("http://www.ivyleaguesports.com/sports/msquash/2016-17/standings",	"ivyleaguestandings/menssquash.html"),
-		array("http://www.ivyleaguesports.com/sports/wsquash/2016-17/standings",	"ivyleaguestandings/womenssquash.html"),
-		array("http://www.ivyleaguesports.com/sports/mswimdive/2016-17/standings",	"ivyleaguestandings/mensswimming.html"),
-		array("http://www.ivyleaguesports.com/sports/wswimdive/2016-17/standings",	"ivyleaguestandings/womensswimming.html"));
 /*		array("http://www.ivyleaguesports.com/sports/fball/2016-17/standings",		"ivyleaguestandings/football.html"),
 		array("http://www.ivyleaguesports.com/sports/wvball/2016-17/standings",		"ivyleaguestandings/volleyball.html"),		
 		array("http://www.ivyleaguesports.com/sports/msoc/2016-17/standings",			"ivyleaguestandings/menssoccer.html"),
 		array("http://www.ivyleaguesports.com/sports/wsoc/2016-17/standings",			"ivyleaguestandings/womenssoccer.html"),
 		array("http://www.ivyleaguesports.com/sports/fh/2016-17/standings",			"ivyleaguestandings/fieldhockey.html")); */
-/*		array("http://www.ivyleaguesports.com/sports/bsb/2015-16/standings",           "ivyleaguestandings/baseball.html"),
-		array("http://www.ivyleaguesports.com/sports/sball/2015-16/standings-include", "ivyleaguestandings/softball.html"),
-		array("http://www.ivyleaguesports.com/sports/mlax/2015-16/standings",          "ivyleaguestandings/menslacrosse.html"),
-		array("http://www.ivyleaguesports.com/sports/wlax/2015-16/standings",		     "ivyleaguestandings/womenslacrosse.html"),
-		array("http://www.ivyleaguesports.com/sports/mten/2015-16/standings",          "ivyleaguestandings/menstennis.html"),
-		array("http://www.ivyleaguesports.com/sports/wten/2015-16/standings",          "ivyleaguestandings/womenstennis.html")); */
+/*		array("http://www.ivyleaguesports.com/sports/mbkb/2016-17/standings",		"ivyleaguestandings/mensbasketball.html"),
+		array("http://www.ivyleaguesports.com/sports/wbkb/2016-17/standings",		"ivyleaguestandings/womensbasketball.html"),		
+		array("http://www.ecachockey.com/men/2016-17/standings",								"ivyleaguestandings/menshockey.html"),
+		array("http://www.ecachockey.com/women/2016-17/standings",								"ivyleaguestandings/womenshockey.html"),
+		array("http://www.ivyleaguesports.com/sports/msquash/2016-17/standings",	"ivyleaguestandings/menssquash.html"),
+		array("http://www.ivyleaguesports.com/sports/wsquash/2016-17/standings",	"ivyleaguestandings/womenssquash.html"),
+		array("http://www.ivyleaguesports.com/sports/mswimdive/2016-17/standings",	"ivyleaguestandings/mensswimming.html"),
+		array("http://www.ivyleaguesports.com/sports/wswimdive/2016-17/standings",	"ivyleaguestandings/womensswimming.html")); */
+		array("http://www.ivyleaguesports.com/sports/bsb/2016-17/standings-include",           "ivyleaguestandings/baseball.html"),
+		array("http://www.ivyleaguesports.com/sports/sball/2016-17/standings-include", "ivyleaguestandings/softball.html"),
+		array("http://www.ivyleaguesports.com/sports/mlax/2016-17/standings",          "ivyleaguestandings/menslacrosse.html"),
+		array("http://www.ivyleaguesports.com/sports/wlax/2016-17/standings",		     "ivyleaguestandings/womenslacrosse.html"),
+		array("http://www.ivyleaguesports.com/sports/mten/2016-17/standings",          "ivyleaguestandings/menstennis.html"),
+		array("http://www.ivyleaguesports.com/sports/wten/2016-17/standings",          "ivyleaguestandings/womenstennis.html"));
 
 	foreach($arr as $row) {
 		file_put_contents($row[1], wp_remote_fopen($row[0]));
@@ -362,27 +474,28 @@ function schedule() {
 function standings() {
 
 	$arr = array(
-		array("ivyleaguestandings/mensbasketball.html", "Men's Basketball", 1),
-		array("ivyleaguestandings/womensbasketball.html", "Women's Basketball", 1),
-		array("ivyleaguestandings/menshockey.html", "Men's Hockey", 2),
-		array("ivyleaguestandings/womenshockey.html", "Women's Hockey", 2),
-//		array("ivyleaguestandings/menssquash.html", "Men's Squash", 1),
-//		array("ivyleaguestandings/womenssquash.html", "Women's Squash", 1),
-		array("ivyleaguestandings/mensswimming.html", "Men's Swimming and Diving", 0),
-		array("ivyleaguestandings/womensswimming.html", "Women's Swimming and Diving", 0));
 
-/*		array("ivyleaguestandings/football.html", "Football", 1),
-		array("ivyleaguestandings/volleyball.html", "Volleyball", 1),
-		array("ivyleaguestandings/menssoccer.html", "Men's Soccer", 1),
-		array("ivyleaguestandings/womenssoccer.html", "Women's Soccer", 1),
-		array("ivyleaguestandings/fieldhockey.html", "Field Hockey", 1)); */
+/*		array("ivyleaguestandings/football.html", "Football", STANDARD),
+		array("ivyleaguestandings/volleyball.html", "Volleyball", STANDARD),
+		array("ivyleaguestandings/menssoccer.html", "Men's Soccer", STANDARD),
+		array("ivyleaguestandings/womenssoccer.html", "Women's Soccer", STANDARD),
+		array("ivyleaguestandings/fieldhockey.html", "Field Hockey", STANDARD)); */
 
-/*		array("ivyleaguestandings/baseball.html", "Baseball", 0),
-		array("ivyleaguestandings/softball.html", "Softball", 0),
-		array("ivyleaguestandings/menslacrosse.html", "Men's Lacrosse", 1),
-		array("ivyleaguestandings/womenslacrosse.html", "Women's Lacrosse", 1),
-		array("ivyleaguestandings/menstennis.html", "Men's Tennis", 1),
-		array("ivyleaguestandings/womenstennis.html", "Women's Tennis", 1)); */
+/*		array("ivyleaguestandings/mensbasketball.html", "Men's Basketball", STANDARD),
+		array("ivyleaguestandings/womensbasketball.html", "Women's Basketball", STANDARD),
+		array("ivyleaguestandings/menshockey.html", "Men's Hockey", HOCKEY),,
+		array("ivyleaguestandings/womenshockey.html", "Women's Hockey", HOCKEY),
+		array("ivyleaguestandings/menssquash.html", "Men's Squash", STANDARD),
+		array("ivyleaguestandings/womenssquash.html", "Women's Squash", STANDARD),
+		array("ivyleaguestandings/mensswimming.html", "Men's Swimming and Diving", STANDARD),
+		array("ivyleaguestandings/womensswimming.html", "Women's Swimming and Diving", STANDARD)) */
+
+		array("ivyleaguestandings/baseball.html", "Baseball", NEW_BASEBALL_SOFTBALL),
+		array("ivyleaguestandings/softball.html", "Softball", OLD_BASEBALL_SOFTBALL),
+		array("ivyleaguestandings/menslacrosse.html", "Men's Lacrosse", STANDARD),
+		array("ivyleaguestandings/womenslacrosse.html", "Women's Lacrosse", STANDARD),
+		array("ivyleaguestandings/menstennis.html", "Men's Tennis", STANDARD),
+		array("ivyleaguestandings/womenstennis.html", "Women's Tennis", STANDARD)); 
 
 	$num_sports = count($arr);
 	for($sport = 0; $sport < $num_sports; $sport++) {
@@ -396,31 +509,14 @@ function standings() {
 		//discard white space   
 		$dom->preserveWhiteSpace = false;
 
-		if ($arr[$sport][2] == 2) {
-			echo hockey_standings($dom, $arr[$sport][1]);
+		if ($arr[$sport][2] == HOCKEY) {
+			hockey_standings($dom, $arr[$sport][1], $arr[$sport][2]);
+			continue;
+		} else if ($arr[$sport][2] == OLD_BASEBALL_SOFTBALL) {
+			old_baseball_softball_standings($dom, $arr[$sport][1], $arr[$sport][2]);
 			continue;
 		}
-
-		//the table by its tag name
-		$tables = $dom->getElementsByTagName('table');
-
-		//get all rows from the table  
-		$newtable = get_table($tables, 0);
-
-		echo '<p class="sidebar sidebar-title">Ivy League '.$arr[$sport][1].' Standings</p>';
-		if(!strcmp($arr[$sport][1], "Baseball")) {
-			echo '<p class="sidebar sidebar-subtitle">Red Rolfe Division</p>';
-			$newtable2 = get_table($tables, 1);
-			echo build_table($newtable2, $arr[$sport][2]);
-			echo '<p class="sidebar sidebar-subtitle">Lou Gehrig Division</p>';
-		}
-		if(!strcmp($arr[$sport][1], "Softball")) {
-			echo '<p class="sidebar sidebar-subtitle">North Division</p>';
-			echo build_table($newtable, $arr[$sport][2]);
-			$newtable = get_table($tables, 1);
-			echo '<p class="sidebar sidebar-subtitle">South Division</p>';
-		}
-		echo build_table($newtable, $arr[$sport][2]);
+		standard_standings($dom, $arr[$sport][1], $arr[$sport][2]);
 	}
 }
 
@@ -465,7 +561,6 @@ function downthefield_entry_meta() {
 		downthefield_entry_date();
 		printf(', '.str_replace(array('am','pm'),array('a.m.','p.m.'),get_post_time('g:i a')));
 	}
-
 }
 
 function downthefield_entry_date() {
@@ -498,6 +593,9 @@ function downthefield_post_thumbnail($class = 'attachment-post-thumbnail size-po
 
 	<div class="post-thumbnail">
 		<?php the_post_thumbnail(); ?>
+		<div class='thumbnail-caption'>
+			<?php echo get_post(get_post_thumbnail_id())->post_excerpt; ?>
+		</div>
 	</div><!-- .post-thumbnail -->
 
 	<?php else : ?>
@@ -565,6 +663,33 @@ function possibly_update_standings_schedule() {
 		}
 	}
 }
+
+add_action('wp_footer', 'possibly_update_standings_schedule');
+
+function find_sport_category() {
+	$categories = get_the_category();
+	$num_sports = 0;
+	$return_value = NULL;
+	if (!empty($categories)) {
+		foreach($categories as $category) {
+			$parent_id = $category->parent;
+			$parent = get_category($parent_id);
+			if ($parent && $parent->name == "Sports") {
+				$num_sports++;
+				$return_value = $category->name;
+			}
+		}
+	}
+	if ($num_sports == 1) {
+		return $return_value;
+	}
+	return NULL;
+}
+
+define('OLD_BASEBALL_SOFTBALL', 0);
+define('STANDARD', 1);
+define('HOCKEY', 2);
+define('NEW_BASEBALL_SOFTBALL', 3);
 
 $counter = -1;
 $row_mobile = '';

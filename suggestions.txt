@@ -1,0 +1,3 @@
+Top align the times
+Take out left padding on table td's
+Captions

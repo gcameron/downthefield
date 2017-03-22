@@ -1,0 +1,58 @@
+high-level
+	problem
+
+		programming environment in current is difficult to use
+		OSGI — 
+		we want modular-based programming environment
+		mven
+		compilation
+		testing is difficult
+		testing and debugging is very hard
+		we want the IDE to do the debuffing
+		eclispse shows variables, stack
+		way to visualize ibformation specific to Maple, netj something
+
+		programming
+		compilation
+		testing
+		visualization of running state
+
+		cloud9
+
+		number 1: set up programming environment in IntelliJ or Eclipse
+		server rchiecture
+		propose one new idea
+
+		debugging:
+			breakpoint — trap
+			watch variable
+
+
+General structure
+	Maintain trace tree for each switch in network
+	Leaves = port of exit
+	What is environment state?
+	Need to parallelize decisions (one thread per switch)
+
+	Trace trees
+		Maintain type of node
+
+Focus on IntelliJ
+
+
+Mei will organize code
+
+How to start a terminal in IntelliJ
+
+Goal: replicate functionality from Cloud9
+	After that, new ideas
+	Visual programming
+
+1: create terminal in IntelliJ
+2: figure out what I like and dislike about Cloud9
+
+Editor for file not on disk: VirtualFileSystem
+
+Jensen design — hasn't done anything yet
+
+Always update with progress
